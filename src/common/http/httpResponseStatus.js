@@ -1,0 +1,6 @@
+const HTTP_RESPONSE_STATUS = {
+    CREATED: 201,
+    OK: 200
+};
+
+export default HTTP_RESPONSE_STATUS;
