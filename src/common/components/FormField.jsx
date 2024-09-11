@@ -11,9 +11,9 @@ import {
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 
-export function FormField({ name, onChange, size, placeholder, label, type, isRequired, errorMessage, checkIfIsInvalid }) {
+export function FormField({ name, onChange, size, placeholder, label, type, isRequired, errorMessage, checkIfIsInvalid, value }) {
     const [showPassword, setShowPassword] = useState(false);
-    const [input, setInput] = useState("");
+    const [input, setInput] = useState(value || "");
 
     const validateEmail = type !== "email" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input);
     const validatePhone = type !== "tel" || /^\d{9,11}$/.test(input);
@@ -80,5 +80,6 @@ FormField.propTypes = {
     type: PropTypes.string,
     isRequired: PropTypes.bool,
     errorMessage: PropTypes.string,
-    checkIfIsInvalid: PropTypes.bool
+    checkIfIsInvalid: PropTypes.bool,
+    value: PropTypes.any
 }
