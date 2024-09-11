@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { DefaultLink } from "@common/components/DefaultLink.jsx";
 import { FormField } from "@common/components/FormField.jsx";
 import { useLoading } from "@common/hooks/Loading/useLoading.jsx";
-import registerController from "@auth/controllers/registerController.js";
+import registerController from "@controllers/auth/registerController.js";
 
 export function Register({ isCustomer }) {
   const navigate = useNavigate();

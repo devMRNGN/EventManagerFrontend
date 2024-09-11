@@ -1,4 +1,4 @@
-import register from "@auth/services/register.js";
+import register from "@services/auth/register.js";
 import StandardResponse from "@common/http/standardResponse.js";
 
 export default async function registerController(body){

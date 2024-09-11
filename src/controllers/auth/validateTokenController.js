@@ -1,4 +1,4 @@
-import validateToken from "@auth/services/validateToken.js";
+import validateToken from "@services/auth/validateToken.js";
 import StandardResponse from "@common/http/standardResponse.js";
 
 export default async function validateTokenController(token){

@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 import { DefaultLink } from "@common/components/DefaultLink.jsx";
 import { useAuth } from "@auth/hooks/AuthContext/UseAuth.jsx";
 import { useLoading } from "@common/hooks/Loading/useLoading";
-import loginController from "@auth/controllers/loginController.js";
+import loginController from "@controllers/auth/loginController.js";
 import { isBlank } from "@common/utils/isBlank.js";
 
 export function Login({ isCustomer }){

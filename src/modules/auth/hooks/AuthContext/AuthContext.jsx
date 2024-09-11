@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import validateTokenController from "@auth/controllers/validateTokenController.js";
+import validateTokenController from "@controllers/auth/validateTokenController.js";
 
 export const AuthContext = createContext();
 

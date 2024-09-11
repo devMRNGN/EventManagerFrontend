@@ -25,6 +25,8 @@ export default defineConfig({
       "@auth": path.resolve(__dirname, "./src/modules/auth"),
       "@core": path.resolve(__dirname, "./src/modules/core"),
       "@pages": path.resolve(__dirname, "./src/modules/pages"),
+      "@services": path.resolve(__dirname, "./src/services"),
+      "@controllers": path.resolve(__dirname, "./src/controllers"),
     }
   }
 })

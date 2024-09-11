@@ -1,4 +1,4 @@
-import login from "@auth/services/login.js";
+import login from "@services/auth/login.js";
 import StandardResponse from "@common/http/standardResponse.js";
 
 export default async function loginController(email, password){
