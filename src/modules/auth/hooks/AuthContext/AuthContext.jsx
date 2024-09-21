@@ -20,11 +20,13 @@ export function AuthProvider({ children }) {
             const credentials = JSON.parse(localStorage.getItem("credentials"));
             if(credentials?.token){
                 const { success } = await validateTokenController(credentials.token);
+                console.log(success);
                 if(success){
                     setAuth({
                         token: credentials.token,
                         user: credentials.user,
-                        isAuthenticated: true
+                        isAuthenticated: true,
+                        customer: credentials.customer
                     });
                     setValidatingToken(false);
                     return;
@@ -37,11 +39,12 @@ export function AuthProvider({ children }) {
         checkToken();
     }, []);
 
-    const login = (token, user) => {
+    const login = (token, user, customer = null) => {
         const updatedAuth = {
             token, 
             user,
-            isAuthenticated: true
+            isAuthenticated: true,
+            customer
         };
 
         setAuth(updatedAuth);

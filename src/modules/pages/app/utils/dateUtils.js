@@ -24,3 +24,7 @@ export const formatToDateTimeLocal = (date) => {
   
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
+
+export const formatToScheduleObjTime = (date) => {
+    return `${formatToDateTimeLocal(date)}:00`;
+}

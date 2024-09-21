@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 
 export const App = ({ funcionalityComponent }) => {
     return (
-        <Grid templateColumns={{ base: "1fr", lg: "repeat(6, 1fr)" }} bg="gray.50" w="full" h="100vh">
+        <Grid templateColumns={{ base: "1fr", lg: "repeat(6, 1fr)" }} bg="gray.50" w="full" minH="100vh">
             <GridItem
                 as="aside"
                 colSpan={{ lg: 2, xl: 1 }}

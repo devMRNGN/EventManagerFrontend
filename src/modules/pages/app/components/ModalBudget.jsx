@@ -15,10 +15,12 @@ import {
 import { FormField } from "@common/components/FormField.jsx";
 import PropTypes from "prop-types";
 import { useState } from "react";
-import { formatToDateTimeLocal } from "@pages/app/utils/dateUtils.js";
+import { formatToDateTimeLocal, formatToScheduleObjTime } from "@pages/app/utils/dateUtils.js";
 import { useToast } from "@chakra-ui/react";
 import { useLoading } from "@common/hooks/Loading/useLoading";
 import { useAuth } from "@auth/hooks/AuthContext/UseAuth.jsx";
+import createEventController from "@controllers/partyEvent/createEventController.js";
+import createScheduleController from "@controllers/schedule/createScheduleController";
 
 const requiredFields = ["length", "address", "theme", "birthdayPerson", "schedule"];
 
@@ -27,13 +29,15 @@ export const ModalBudget = ({ startDate, addEvent, isOpen, onClose }) => {
     const { showLoading, hideLoading } = useLoading();
     const [checkInvalidInputs, setCheckInvalidInputs] = useState(false);
     const { auth } = useAuth();
-    const { customer } = auth;
+    const customer = {
+        ...auth.customer,
+        user: auth.user
+    }
 
     const [budget, setBudget] = useState({
         length: "M",
         address: null,
         customer: customer,
-        schedule: null,
         theme: null,
         description: null,
         birthdayPerson: null,
@@ -41,7 +45,7 @@ export const ModalBudget = ({ startDate, addEvent, isOpen, onClose }) => {
         isBudget: true,
         finished: false
     });
-    
+
     const handleBudgetInputChange = (e) => {
         setBudget({
             ...budget,
@@ -49,18 +53,28 @@ export const ModalBudget = ({ startDate, addEvent, isOpen, onClose }) => {
         });
     }
 
+    const [schedule, setSchedule] = useState({
+        eventDateTime: null,
+        events: []
+    })
+
+    const handleScheduleInputChange = (e) => {
+        setSchedule({
+            ...schedule,
+            [e.target.name]: e.target.value
+        });
+    }
+    
     const handleBudgetValidation = () => {
         try{
             const missingFields = requiredFields.filter(field => !budget[field]);
-            if(missingFields.length > 0){
+            const missingSchedule = !schedule.eventDateTime;
+            if(missingFields.length > 0 && missingSchedule){
                 setCheckInvalidInputs(true);
                 throw new Error("Preencha todos os campos necessários");
             }
 
-            handleOnCloseModal();
-            showLoading();
-            addEvent(budget);
-            hideLoading();
+            handleCreateEvent();
         }catch(error){
             toast({
                 status: "error",
@@ -70,6 +84,67 @@ export const ModalBudget = ({ startDate, addEvent, isOpen, onClose }) => {
             });
         }
     };
+
+    const handleCreateEvent = async () => {
+        try{
+            showLoading();
+            const { success, message, data } = await createEventController(budget, auth.token);
+            if(success){
+                await handleScheduleEvent(data.eventId);     
+            }
+
+            toast({
+                status: success ? "success" : "error",
+                title: "Evento",
+                description: message,
+                isClosable: true
+            });
+            hideLoading();
+        }catch(error){
+            console.error("Erro ao cadastrar cliente");
+            console.error(error?.message);
+            toast({
+                status: "error",
+                title: "Evento",
+                description: "Erro ao cadastrar evento",
+                isClosable: true
+            });
+        }finally{
+            handleOnCloseModal();
+        }
+    }
+
+    const handleScheduleEvent = async (eventId) => {
+        try{
+            showLoading();
+            const { success, message, data } = await createScheduleController({
+                events: [eventId],
+                eventDateTime: formatToScheduleObjTime(new Date(schedule.eventDateTime))
+            }, auth.token);
+
+            if(success){
+                console.log(JSON.stringify(data));
+                addEvent(budget, schedule.eventDateTime);
+            }
+
+            toast({
+                status: success ? "success" : "error",
+                title: "Agendamento",
+                description: message,
+                isClosable: true
+            });
+            hideLoading();
+        }catch(error){
+            console.error("Erro ao cadastrar cliente");
+            console.error(error?.message);
+            toast({
+                status: "error",
+                title: "Agendamento",
+                description: "Erro ao cadastrar agendamento para o evento",
+                isClosable: true
+            });
+        }
+    }
 
     const handleOnCloseModal = () => {
         setCheckInvalidInputs(false);
@@ -125,10 +200,10 @@ export const ModalBudget = ({ startDate, addEvent, isOpen, onClose }) => {
                             errorMessage="Por favor, informe o nome do aniversariante."
                         />
                         <FormField
-                            onChange={handleBudgetInputChange}
+                            onChange={handleScheduleInputChange}
                             label="Horário"
                             placeholder="Informe o horário do evento"
-                            name="schedule"
+                            name="eventDateTime"
                             type="datetime-local"
                             size="md"
                             value={formatToDateTimeLocal(new Date(startDate))}

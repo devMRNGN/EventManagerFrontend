@@ -13,6 +13,7 @@ import { DefaultLink } from "@common/components/DefaultLink.jsx";
 import { useAuth } from "@auth/hooks/AuthContext/UseAuth.jsx";
 import { useLoading } from "@common/hooks/Loading/useLoading";
 import loginController from "@controllers/auth/loginController.js";
+import getCustomerByUserIdController from "@controllers/customer/getCustomerByUserIdController.js";
 import { isBlank } from "@common/utils/isBlank.js";
 
 export function Login({ isCustomer }){
@@ -48,7 +49,13 @@ export function Login({ isCustomer }){
             const { success, message, data } = await loginController(email, password);
             if(success){
                 const { token, user } = data;
-                login(token, user);
+
+                let customer = null;
+                if(isCustomer){
+                    customer = await handleGetCustomer(user.userId);
+                }
+
+                login(token, user, customer);
                 navigate("/");
             }
 
@@ -58,17 +65,27 @@ export function Login({ isCustomer }){
                 description: message,
                 isClosable: true
             });
-            hideLoading();
         }catch(error){
-            console.error("Erro ao cadastrar cliente");
+            console.error("Erro ao realizar login");
             console.error(error?.message);
             toast({
                 status: "error",
                 title: "Login",
-                description: "Erro inesperado",
+                description: error?.message || "Erro ao realizar login",
                 isClosable: true
             });
+        }finally{
+            hideLoading();
         }
+    }
+
+    const handleGetCustomer = async (userId) => {
+        const { success, message, data } = await getCustomerByUserIdController(userId);
+        if(success){
+            return data;
+        }
+
+        throw new Error(message);
     }
 
     const handleFormValidation = () => {

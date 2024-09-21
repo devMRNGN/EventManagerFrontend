@@ -27,6 +27,7 @@ export default defineConfig({
       "@pages": path.resolve(__dirname, "./src/modules/pages"),
       "@services": path.resolve(__dirname, "./src/services"),
       "@controllers": path.resolve(__dirname, "./src/controllers"),
+      "@components": path.resolve(__dirname, "./src/components"),
     }
   }
 })

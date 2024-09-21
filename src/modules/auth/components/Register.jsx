@@ -6,6 +6,7 @@ import { DefaultLink } from "@common/components/DefaultLink.jsx";
 import { FormField } from "@common/components/FormField.jsx";
 import { useLoading } from "@common/hooks/Loading/useLoading.jsx";
 import registerController from "@controllers/auth/registerController.js";
+import createCustomerController from "@controllers/customer/createCustomerController.js";
 
 export function Register({ isCustomer }) {
   const navigate = useNavigate();
@@ -40,15 +41,21 @@ export function Register({ isCustomer }) {
     });
   };
 
+  // IMPLEMENTAR UM ESQUEMA PARA REDIRECIONAR APENAS SE CRIAR O USUÁRIO E O CLIENTE CASO ISCUSTOMER = TRUE
+  // IMPLEMENTAR LÓGICA QUE DELETA O USUÁRIO CASO FALHE EM CRIAR O CLIENTE (APÓS JA TER CRIADO USUÁRIO)
   const register = async (e) => {
-    try {
+    try{
       e.preventDefault();
       setCheckInvalidInputs(false);
 
       showLoading();
-      const { success, message } = await registerController(userForm);
-      if (success) {
-        navigate("/login");
+      const { success, message, data } = await registerController(userForm);
+      if(success && isCustomer && data){
+        handleCreateCustomer(data);
+      }
+
+      if(success){
+        navigate(isCustomer ? "/cliente/login" : "/login");
       }
 
       hideLoading();
@@ -69,6 +76,22 @@ export function Register({ isCustomer }) {
       });
     }
   };
+
+  const handleCreateCustomer = async (user) => {
+    try{
+      const { success } = await createCustomerController({
+        ...customerForm,
+        user
+      });
+
+      if(!success){
+        throw new Error("Erro ao cadastrar cliente");
+      }
+    }catch(error){
+      console.error("Erro ao cadastrar cliente");
+      console.error(error?.message);
+    }
+  }
 
   const handleFormValidation = () => {
     try {

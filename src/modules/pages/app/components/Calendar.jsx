@@ -3,20 +3,17 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ModalBudget } from "@pages/app/components/ModalBudget.jsx";
+import getActiveEventScheduleByCustomerController from "@controllers/schedule/getActiveEventScheduleByCustomerController.js";
+import { useAuth } from "@auth/hooks/AuthContext/UseAuth.jsx";
 
 let startDate = null;
 
 export const Calendar = () => {
-  const [events, setEvents] = useState([
-    {
-      "id": "teste",
-      "backgroundColor": "#4DD0E1",
-      "title": "teste - M",
-      "start": "2024-09-12T23:00:00.000Z"
-    }
-  ]);
+  const { auth } = useAuth();
+  const { customer } = auth;
+  const [events, setEvents] = useState([]);
 
   const {
     isOpen: isBudgetModalOpen,
@@ -26,7 +23,6 @@ export const Calendar = () => {
 
   const handleCreateBudget = (selectedDate) => {
     const { start } = selectedDate;
-    console.log(start);
     startDate = start;
     onBudgetModalOpen();
   }
@@ -41,8 +37,8 @@ export const Calendar = () => {
     console.log(JSON.stringify(event.event));
   }
 
-  const handleAddEvent = (budget) => {
-    const { isBudget, birthdayPerson, length, schedule } = budget;
+  const handleAddEvent = (budget, schedule) => {
+    const { isBudget, birthdayPerson, length } = budget;
     const event = {
       id: birthdayPerson,
       backgroundColor: isBudget ? "#4DD0E1" : "#F06292",
@@ -53,6 +49,26 @@ export const Calendar = () => {
     console.log(event);
     setEvents([...events, event]);
   };
+
+  useEffect(() => {
+    const handleGetCustomerActiveEvent = async () => {
+      try{
+        const { success, data } = await getActiveEventScheduleByCustomerController(customer?.customerId, auth?.token);
+        console.log(data);
+        if(success){
+          const { events, eventDateTime } = data;
+          events.forEach(event => {
+            handleAddEvent(event, eventDateTime);
+          });
+        }
+      }catch(error){
+        console.error("Erro ao obter evento ativo do cliente");
+        console.error(error?.message);
+      }
+    };
+
+    handleGetCustomerActiveEvent();
+  }, [customer, auth.token]);
 
   return (
     <>
