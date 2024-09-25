@@ -43,7 +43,7 @@ export function Sidebar(){
                         }}
                     >
                         <ListIcon as={ScheduleIcon}/>
-                        Agenda
+                        Eventos
                     </Flex>
                 </NavLink>
             </ListItem>

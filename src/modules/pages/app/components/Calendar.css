@@ -1,0 +1,31 @@
+.fc-daygrid-day-events{
+    background-color: #E9D8FD !important;
+    color: black !important;
+    cursor: context-menu !important;
+    border-radius: 6px !important;
+}
+
+.fc-daygrid-day-events:hover{
+    background-color: #c18efb !important;
+    color: black !important;
+}
+
+.admin-view-events{
+    cursor: cell !important;
+}
+
+.fc-day-today {
+    background-color: #b5e0ed !important;
+}
+
+.fc-daygrid-day-frame.fc-scrollgrid-sync-inner:has(.event-view) {
+    background-color: #cca7f6 !important;
+}
+
+.fc-daygrid-day-frame.fc-scrollgrid-sync-inner:has(.ocupped-day) {
+    background-color: #c35d60 !important;
+}
+
+.fc-scrollgrid-sync-inner:has(.fc-col-header-cell-cushion){
+    background-color: #bc82fe !important;
+}

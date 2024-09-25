@@ -124,7 +124,7 @@ export const ModalBudget = ({ startDate, addEvent, isOpen, onClose }) => {
 
             if(success){
                 console.log(JSON.stringify(data));
-                addEvent(budget, schedule.eventDateTime);
+                addEvent(budget, schedule.eventDateTime, false);
             }
 
             toast({
